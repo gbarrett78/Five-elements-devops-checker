@@ -27,3 +27,7 @@ jobs:
             --log-group-name "/github-actions/required-files-checker/beta" \
             --log-stream-name "$TIMESTAMP" \
             --log-events "timestamp=$(date +%s)000, message='Required files check completed on PR'"
+
+            - name: Configure AWS Credentials
+       
+
