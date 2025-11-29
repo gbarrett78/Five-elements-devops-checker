@@ -16,14 +16,22 @@ jobs:
       - name: Run required files checker
         run: python3 check_required_files.py
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Log results to CloudWatch (Prod)
         run: |
           TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
           aws logs create-log-stream \
-            --log-group-name "/github-actions/required-files-checker/prod" \
+            --log-group-name "${{ secrets.LOG_GROUP_NAME }}" \
             --log-stream-name "$TIMESTAMP"
-          
+
           aws logs put-log-events \
-            --log-group-name "/github-actions/required-files-checker/prod" \
+            --log-group-name "${{ secrets.LOG_GROUP_NAME }}" \
             --log-stream-name "$TIMESTAMP" \
-            --log-events "timestamp=$(date +%s)000, message='Required files check completed on merge to main'"
+            --log-events "timestamp=$(date +%s)000, message='Required files check completed'"
